@@ -16,10 +16,12 @@ extern int i_min_changed;
 extern int button_h, button_w;
 extern int temp_max_int;
 extern int temp_cnt;
+extern float cur_temp;
 
 MyLabel::MyLabel(QWidget *parent) : QLabel(parent)
 {
 	myMax= new QLabel(this); 
+    myMax2= new QLabel(this);
 }
 MyLabel::~MyLabel()
 {
@@ -38,16 +40,21 @@ void MyLabel::setImage(QImage image) {
   	//QLabel *myMax= new QLabel(this); 
 	myMax->setGeometry(10,10,80,40);
 	QFont f("Arial",20,QFont::Bold);
+    QFont f2("Arial",20,QFont::Blue);
 	myMax->setFont(f);
-
+    myMax2->setGeometry(10,10,80,40);
+    myMax2->setFont(f2);
 	char s[20];
+    	char d[20];
 	float temp=temp_max_int/59.5-100;
-	sprintf(s,"%4.1f",temp);
-
-  	myMax->setText(s);
-	
-  	myMax->move(button_w*8,button_h*8);
+    sprintf(s,"%4.1f",temp);
+    sprintf(d,"%4.1f",cur_temp);
+    myMax->setText(s);
+    myMax2->setText(d);
+	   myMax->move(button_w*8,button_h*8);
+    myMax2->move(5,5);
   	myMax->show(); 
+    myMax2->show();
 	
 	
         
