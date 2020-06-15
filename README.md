@@ -24,7 +24,7 @@
 - 문제 부위를 높은 정확도로 쉽고 빠르게 발견 가능
 
 ## 참고 자료
-|------|---|---|
+|--------------|-------------------------------------------------------------------------|
 |SPI통신|https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi|
 |I2C통신|https://learn.sparkfun.com/tutorials/i2c|
 |Raspbian설정|https://learn.sparkfun.com/tutorials/setting-up-raspbian-and-doom|
