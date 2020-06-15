@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include "LeptonThread.h"
 #include "MyLabel.h"
+#include <wiringPi.h>
+
 
 #define PACKET_SIZE 164
 #define PACKET_SIZE_UINT16 (PACKET_SIZE/2)
@@ -31,8 +33,9 @@ int main( int argc, char **argv )
 
 	int h_res=640, v_res=480;
 	QWidget *myWidget = new QWidget;
-	myWidget->setGeometry(200, 100, 200, 200);
+    myWidget->setGeometry(20, 37, 700, 400);
 	
+    if (wiringPiSetup() == -1) exit(1) ;
 
 	//create an image placeholder for myLabel
 	//fill the top left corner with red, just bcuz
@@ -50,10 +53,11 @@ int main( int argc, char **argv )
 	myLabel.setGeometry(0, 0, h_res, v_res);
 	myLabel.setPixmap(QPixmap::fromImage(myImage));
 	
-	MyLabel myMax(myWidget);
+    MyLabel myMax(myWidget);
+    MyLabel myMax2(myWidget);
 	
 	//create a FFC button
-	QPushButton *button1 = new QPushButton("Perform FFC", myWidget);
+    QPushButton *button1 = new QPushButton("Save", myWidget);
 	//button1->setGeometry(320/2-50, 290-35, 100, 30);
 	button1->setGeometry(button_h, button_w, 100, 30);
         qDebug() << "WWW" << button_h;
@@ -63,7 +67,7 @@ int main( int argc, char **argv )
 	QObject::connect(thread, SIGNAL(updateImage(QImage)), &myLabel, SLOT(setImage(QImage)));
 	//QObject::connect(thread, SIGNAL(updateImage(QImage)), &myMax, SLOT(SetText()));
 	//connect ffc button to the thread's ffc action
-	QObject::connect(button1, SIGNAL(clicked()), thread, SLOT(performFFC()));
+    QObject::connect(button1, SIGNAL(clicked()), &myLabel, SLOT(saveData()));
 	thread->start();
 	
 	myWidget->show();
