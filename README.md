@@ -23,8 +23,8 @@
 - 수 천 개의 적외선 온도계를 동시에 사용하는 것과 같은 효과
 - 문제 부위를 높은 정확도로 쉽고 빠르게 발견 가능
 
-|제목|내용|설명|
-|------|---|---|
-|테스트1|테스트2|테스트3|
-|테스트1|테스트2|테스트3|
-|테스트1|테스트2|테스트3|
+## 참고 자료
+|SPI통신|https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi|
+|I2C통신|https://learn.sparkfun.com/tutorials/i2c|
+|Raspbian설정|https://learn.sparkfun.com/tutorials/setting-up-raspbian-and-doom|
+|라즈베리GPIO|https://learn.sparkfun.com/tutorials/raspberry-gpio|
