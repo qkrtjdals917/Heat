@@ -22,6 +22,7 @@ class MyLabel : public QLabel {
     void SetText();
   private :
 	QLabel *myMax;
+    	QLabel *myMax2;
 };
 
 #endif
