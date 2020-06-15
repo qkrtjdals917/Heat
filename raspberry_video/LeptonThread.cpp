@@ -4,13 +4,20 @@
 #include "Palettes.h"
 #include "SPI.h"
 #include "Lepton_I2C.h"
+#include <wiringPi.h>
+
+
 //#include <stdio.h>
 extern int button_h,button_w;
 int i_max_changed=0;
 int i_min_changed=0;
 extern QLabel *myMax;
+extern QLabel *myMax2;
+
 int temp_max_int;
 int temp_cnt=0;
+float cur_temp = 0;
+
 LeptonThread::LeptonThread() : QThread()
 {
 }
@@ -25,7 +32,8 @@ void LeptonThread::run()
 	 
 	//open spi port
 	SpiOpenPort(0);
-	
+
+    int dht11_dat[5] = {0, } ;
 	int i_max=0;
 	int i_min=0;
 	
@@ -134,16 +142,45 @@ void LeptonThread::run()
                        
 
 		//const QRect rectangle=QRect(5,5,20,20);
+            uint8_t laststate = HIGH ;
+                    uint8_t counter = 0 ;
+                    uint8_t j = 0, i ;
+                    uint8_t flag = HIGH ;
+                    uint8_t state = 0 ;
 
+                    dht11_dat[0] = dht11_dat[1] = dht11_dat[2] = dht11_dat[3] = dht11_dat[4] = 0 ;
+                    pinMode(DHTPIN, OUTPUT) ;
+                    digitalWrite(DHTPIN, LOW) ;
+                    delay(18) ;
+                    digitalWrite(DHTPIN, HIGH) ;
+                    delayMicroseconds(30) ;
+                    pinMode(DHTPIN, INPUT) ;
+
+                    for (i = 0; i < MAXTIMINGS; i++) {
+                        counter = 0 ;
+                        while ( digitalRead(DHTPIN) == laststate) {
+                            counter++ ;
+                            delayMicroseconds(1) ;
+                            if (counter == 200) break ;
+                        }
+                        laststate = digitalRead(DHTPIN) ;
+                        if (counter == 200) break ;
+                        if ((i >= 4) && (i % 2 == 0)) {
+                            dht11_dat[j / 8] <<= 1 ;
+                            if (counter > 50) dht11_dat[j / 8] |= 1 ;
+                            j++ ;
+                        }
+                    }
+                    if ((j >= 40) && (dht11_dat[4] == ((dht11_dat[0] + dht11_dat[1] + dht11_dat[2] + dht11_dat[3]) & 0xff))) {
+                          cur_temp = dht11_dat[2]+ 0.1*dht11_dat[3];
+                    }
 		QPainter p(&myImage);
 		p.setPen(QPen(Qt::red));
 		p.setFont(QFont("Times",5,QFont::Bold));
 		//p.drawText(myImage.rect(),Qt::AlignCenter,"Hot")
-		char s[20];
-		float temp=maxValue/59.5-6.0;
-		sprintf(s,"%4.2f",temp);
+
 //p.drawText(button_w,button_h,s);
-                p.drawText(button_w,button_h,"Hot");
+        p.drawText(button_w,button_h,"Hot");
 		//p.drawText(10,5,"Hello");
 		//p.drawText(rectangle,Qt::AlignCenter,"Hello");
 		temp_max_int=maxValue;
@@ -158,7 +195,16 @@ void LeptonThread::run()
 	SpiClosePort(0);
 }
 
-void LeptonThread::performFFC() {
-	//perform FFC
-	lepton_perform_ffc();
+void LeptonThread::save() {
+    FILE *fptr1;
+    fptr1 = fopen("/home/pi/Downloads/LeptonModule-master/software/raspberrypi_video/bb.txt","wt");
+    fprintf(fptr1,"abcd");
+    fprintf(fptr1,"current temp %d\n",cur_temp);
+    for (int i=0;i<80*60;i++){
+        fprintf(fptr1,"%d %d\n",i,frameBuffer1[i]);
+        if (i==(80*60-1)){
+            fprintf(fptr1,"\n END ");
+        }
+    }
+    fclose(fptr1);
 }
